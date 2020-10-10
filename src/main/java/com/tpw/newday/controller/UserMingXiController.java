@@ -1,5 +1,6 @@
 package com.tpw.newday.controller;
 
+import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.User;
 import com.tpw.newday.bean.UserMingxi;
 import com.tpw.newday.service.IUserService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+
 
 
 @RestController
@@ -37,5 +39,10 @@ public class UserMingXiController {
     @RequestMapping("/getUserById")
     public User getUserById(String userId) {
         return userService.getUserById(userId);
+    }
+
+    @RequestMapping("/getUserMingXiByUid")
+    public List<PhoniexUserMingxi> getUserMingXi(int uid) {
+        return userService.getUserMingxiByUid(uid,0,10);
     }
 }

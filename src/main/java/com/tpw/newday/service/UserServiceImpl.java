@@ -1,11 +1,13 @@
 package com.tpw.newday.service;
 
+import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.User;
 import com.tpw.newday.bean.UserMingxi;
 import com.tpw.newday.dao.UserMingXiDao;
 import com.tpw.newday.local_bean.JpaUser;
 import com.tpw.newday.local_dao.UserJpaDao;
 import com.tpw.newday.mapper.localdb.UserMapper;
+import com.tpw.newday.phoniex_dao.UserMingXiPhoniexMapper;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
@@ -28,6 +30,9 @@ public class UserServiceImpl implements IUserService {
     @Resource
     UserJpaDao userJpaDao;
 
+    @Resource
+    UserMingXiPhoniexMapper userMingXiPhoniexMapper;
+
     @Override
     public List<UserMingxi> getUserMingxiByRelate_id(int relate_id) {
         return userMingXiDao.getUserMingxiByRelate_id(relate_id);
@@ -48,5 +53,10 @@ public class UserServiceImpl implements IUserService {
             e.printStackTrace();
         }
         return user;
+    }
+
+    @Override
+    public List<PhoniexUserMingxi> getUserMingxiByUid(int uid, int offset, int limit) {
+        return userMingXiPhoniexMapper.selectAll(uid,offset,limit);
     }
 }
