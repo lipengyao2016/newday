@@ -13,5 +13,4 @@ public interface UserMingXiDao extends JpaRepository<UserMingxi,Integer> {
 //    @Query("select a from UserMingxi a where a.relate_id=?1 ")
     @Query(value = "select a.* from fanli_mingxi_new a where a.relate_id=?1 ",nativeQuery = true)
     public List<UserMingxi> getUserMingxiByRelate_id(int relate_id);
-
 }

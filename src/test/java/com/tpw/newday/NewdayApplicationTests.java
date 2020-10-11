@@ -1,5 +1,6 @@
 package com.tpw.newday;
 
+import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.UserMingxi;
 import com.tpw.newday.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,12 @@ class NewdayApplicationTests {
     @Test
     void testGetUser() {
         List<UserMingxi> userMingxi = userService.getUserMingxiByRelate_id(198707343);
-	    System.out.println("end");
+        System.out.println("end");
+    }
+
+    @Test
+    void testGetUserMingxiByUid() {
+        List<PhoniexUserMingxi> userMingxi = userService.getUserMingxiByUid(10408531,0,5);
+        System.out.println("end");
     }
 }

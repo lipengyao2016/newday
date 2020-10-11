@@ -4,6 +4,7 @@ import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.User;
 import com.tpw.newday.bean.UserMingxi;
 import com.tpw.newday.dao.UserMingXiDao;
+import com.tpw.newday.dao.UserMingXiOriginalDao;
 import com.tpw.newday.local_bean.JpaUser;
 import com.tpw.newday.local_dao.UserJpaDao;
 import com.tpw.newday.mapper.localdb.UserMapper;
@@ -33,9 +34,13 @@ public class UserServiceImpl implements IUserService {
     @Resource
     UserMingXiPhoniexMapper userMingXiPhoniexMapper;
 
+    @Resource
+    UserMingXiOriginalDao userMingXiOriginalDao;
+
     @Override
     public List<UserMingxi> getUserMingxiByRelate_id(int relate_id) {
-        return userMingXiDao.getUserMingxiByRelate_id(relate_id);
+      //  return userMingXiDao.getUserMingxiByRelate_id(relate_id);
+        return userMingXiOriginalDao.getUserMingxiByRelate_id(relate_id);
     }
 
     @Override
