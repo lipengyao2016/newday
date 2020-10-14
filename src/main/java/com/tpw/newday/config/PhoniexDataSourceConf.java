@@ -13,9 +13,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 // 配置mybatis的接口类放的地方
-@MapperScan(basePackages = "com.tpw.newday.phoniex_dao", sqlSessionFactoryRef = "phoniex_db_sqlSessionFactory")
+//@MapperScan(basePackages = "com.tpw.newday.phoniex_dao", sqlSessionFactoryRef = "phoniex_db_sqlSessionFactory")
 public class PhoniexDataSourceConf {
 
     // 将这个对象放入Spring容器中

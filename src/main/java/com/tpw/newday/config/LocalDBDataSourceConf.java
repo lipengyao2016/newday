@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.annotation.Resource;
-import javax.inject.Qualifier;
 import javax.sql.DataSource;
 
 //表示这个类为一个配置类

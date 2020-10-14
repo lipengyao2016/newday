@@ -1,6 +1,6 @@
 package com.tpw.newday.local_bean;
 
-import org.joda.time.DateTime;
+
 
 import javax.persistence.*;
 import java.util.Date;
