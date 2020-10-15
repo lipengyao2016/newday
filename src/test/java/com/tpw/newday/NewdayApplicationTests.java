@@ -44,4 +44,11 @@ class NewdayApplicationTests {
         userMingXiOriginalDao.getUserMingxiAndMobile(198707343);
         System.out.println("end");
     }
+
+    @Test
+    void testSyncMysqlDataToHdfs() {
+        userService.syncMysqlDataToHdfs();
+        System.out.println("end");
+    }
+
 }

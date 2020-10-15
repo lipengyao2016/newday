@@ -3,24 +3,33 @@ package com.tpw.newday.service;
 import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.User;
 import com.tpw.newday.bean.UserMingxi;
+import com.tpw.newday.common.MyConstants;
 import com.tpw.newday.dao.UserMingXiDao;
 import com.tpw.newday.dao.UserMingXiOriginalDao;
+import com.tpw.newday.hdfs_dao.UserMingXiNoSqlDao;
 import com.tpw.newday.local_bean.JpaUser;
 import com.tpw.newday.local_dao.UserJpaDao;
 import com.tpw.newday.mapper.localdb.UserMapper;
 import com.tpw.newday.phoniex_dao.UserMingXiPhoniexMapper;
+import com.tpw.newday.utils.MyDateUtil;
+import com.tpw.newday.utils.RedisUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.List;
 
 @Service("UserService")
 public class UserServiceImpl implements IUserService {
+
+    private static final Log logger = LogFactory.getLog(UserServiceImpl.class);
 
     @Autowired
     UserMingXiDao userMingXiDao;
@@ -31,11 +40,14 @@ public class UserServiceImpl implements IUserService {
     @Resource
     UserJpaDao userJpaDao;
 
-    @Resource
-    UserMingXiPhoniexMapper userMingXiPhoniexMapper;
+//    @Resource
+//    UserMingXiPhoniexMapper userMingXiPhoniexMapper;
 
     @Resource
     UserMingXiOriginalDao userMingXiOriginalDao;
+
+    @Resource
+    UserMingXiNoSqlDao userMingXiNoSqlDao;
 
     @Override
     public List<UserMingxi> getUserMingxiByRelate_id(int relate_id) {
@@ -62,6 +74,72 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<PhoniexUserMingxi> getUserMingxiByUid(int uid, int offset, int limit) {
-        return userMingXiPhoniexMapper.selectAll(uid,offset,limit);
+//        return userMingXiPhoniexMapper.selectAll(uid,offset,limit);
+        return  null;
+    }
+
+    @Override
+    public boolean syncMysqlDataToHdfs() {
+        logger.info(" begin" );
+
+        int offset =0,pageSize = 1000;
+        int totalCnt = 0;
+        long lCur = System.currentTimeMillis();
+        int loopCnt = 0;
+        String lastCreateTime = "";
+        String cacheKey = "Hdfs_MingXi:lastCreateTime";
+
+        RedisUtil redisUtil = new RedisUtil(MyConstants.redis_host_ip,MyConstants.redis_port,MyConstants.redis_password);
+
+        String val = (String) redisUtil.get(cacheKey);
+        if (val != null)
+        {
+            lastCreateTime = val;
+        }else{
+            lastCreateTime = "2020-07-05 16:33:01";
+          //  lastCreateTime = MyDateUtil.formatDate(new Date(nMaxCreateTime),null);
+        }
+
+
+        while (true)
+        {
+            List<UserMingxi>  userMingxis =  userMingXiDao.selectAll(0,pageSize,lastCreateTime);
+            totalCnt += userMingxis.size();
+            offset += pageSize;
+
+            //mingxiNewHbaseDao.WriteData(userMingxis);
+            // mingxiNewPhoenixDao.insert(userMingxis.get(0));
+            userMingXiNoSqlDao.batchInsert(userMingxis);
+
+
+            if (userMingxis.size() >0 )
+            {
+                lastCreateTime = MyDateUtil.formatDate(userMingxis.get(userMingxis.size()-1).getCreate_time(),null);
+            }
+
+            logger.info(" cnt:" + userMingxis.size() + " totalCnt:" + totalCnt
+                    +" lastCreateTime:"+lastCreateTime);
+            redisUtil.set(cacheKey,lastCreateTime,-1);
+            loopCnt++;
+             if (loopCnt >= 2)
+             {
+                 break;
+             }
+
+            if (loopCnt%10 ==0)
+            {
+                logger.info(" per 10 ci.. totalCnt:" + totalCnt + " loopCnt:" + loopCnt + " tm:" + (System.currentTimeMillis()-lCur) );
+                lCur = System.currentTimeMillis();
+            }
+
+            if (userMingxis.size() < pageSize)
+            {
+                break;
+            }
+
+        }
+
+        logger.info(" end.. totalCnt:" + totalCnt  + " loopCnt:" + loopCnt + " tm:" + (System.currentTimeMillis()-lCur) );
+        return  true;
     }
 }

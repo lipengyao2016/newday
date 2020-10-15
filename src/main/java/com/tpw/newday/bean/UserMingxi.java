@@ -1,5 +1,7 @@
 package com.tpw.newday.bean;
 
+import com.tpw.newday.utils.MyDateUtil;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -102,6 +104,12 @@ public class UserMingxi {
     }
     
 
+    public String toString()
+    {
+        return this.getId() + " " + this.getUid()+ " "+ this.getTeam_uid()+ " "+ this.getTrade_uid()+ " "
+                + this.getTrade_id_former()+ " "+ MyDateUtil.formatDate(this.getCreate_time(),null)+ " "+ this.getShijian()+ " "
+                + this.getMoney()+ " "+ this.getRelate_id();
+    }
 
 
 }

@@ -14,4 +14,6 @@ public interface IUserService {
     public User getUserById(String userId) ;
 
     public List<PhoniexUserMingxi> getUserMingxiByUid( int uid,  int offset, int limit);
+
+    public boolean syncMysqlDataToHdfs();
 }
