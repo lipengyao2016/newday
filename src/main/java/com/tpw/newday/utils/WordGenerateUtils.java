@@ -1,9 +1,13 @@
 package com.tpw.newday.utils;
 
 import com.tpw.newday.NewdayApplication;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.springframework.boot.SpringApplication;
 
 import java.io.File;
@@ -14,10 +18,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class WordGenerateUtils {
-    private static final String[] wordList = new String[]{"Spark", "Hadoop", "HBase", "Storm", "Flink", "Hive"};
+    public static final String[] wordList = new String[]{"Spark", "Hadoop", "HBase", "Storm", "Flink", "Hive"};
+    private static  final Log log = LogFactory.getLog(WordGenerateUtils.class);
+
+    public static List<String> wordArray = Arrays.asList(wordList);
 
     public String generateWordStrs(int count)
     {
@@ -104,9 +114,16 @@ public class WordGenerateUtils {
 
     public static void main(String[] args) {
        WordGenerateUtils wordGenerateUtils = new WordGenerateUtils();
-       int count = 100;
+       int count = 100000;
 //       wordGenerateUtils.saveToLocalFile(PathUtils.getCurPath() + "\\word.txt",wordGenerateUtils.generateWordStrs(count));
-        wordGenerateUtils.saveToHdfsFile("hdfs://hadoop001:8020","root","/data/wordCount/word.txt",wordGenerateUtils.generateWordStrs(count));
+//        wordGenerateUtils.saveToHdfsFile("hdfs://hadoop001:8020","root","/data/wordCount/word.txt",wordGenerateUtils.generateWordStrs(count));
+
+        wordGenerateUtils.saveToHdfsFile("hdfs://localhost:9000","Administrator","/data/wordCount/word.txt",wordGenerateUtils.generateWordStrs(count));
+
+//        String value = "Hive Hive Hive Flink Flink HBase Hive Hadoop Spark Spark Flink  ";
+//        String[] words = value.toString().split(" ");
+//        log.info(" words:" + GsonUtils.toJson(words,words.getClass()));
+
     }
 
 }
