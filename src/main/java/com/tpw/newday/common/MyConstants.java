@@ -17,12 +17,12 @@ public class MyConstants {
      */
     public static final String result_fail="fail";
 
-    public static final String hdfs_url = "hdfs://localhost:9000";
-    public static final String hdfs_user = "Administrator";
+//    public static final String hdfs_url = "hdfs://localhost:9000";
+//    public static final String hdfs_user = "Administrator";
 
 
-//    public static final String hdfs_url = "hdfs://hadoop001:8020";
-//    public static final String hdfs_user = "root";
+    public static final String hdfs_url = "hdfs://hadoop001:8020";
+    public static final String hdfs_user = "root";
 
     public static final String userMingxiPath = "/data/userMingxi/mingxi6.txt";
 }

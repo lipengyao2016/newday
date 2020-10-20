@@ -55,8 +55,8 @@ public class MingXiMoneySumApp {
         Job job = Job.getInstance(configuration);
 
         // 设置运行的主类
-        job.setJarByClass(MingXiMoneySumApp.class);
-//        job.setJar("/data/work/hadoop/newday-0.0.1-SNAPSHOT.jar");
+//        job.setJarByClass(MingXiMoneySumApp.class);
+        job.setJar("/data/work/hadoop/newday-0.0.1-SNAPSHOT.jar");
 
         log.info(" init job ok 22:" );
 
