@@ -118,7 +118,7 @@ public class WordGenerateUtils {
 //       wordGenerateUtils.saveToLocalFile(PathUtils.getCurPath() + "\\word.txt",wordGenerateUtils.generateWordStrs(count));
 //        wordGenerateUtils.saveToHdfsFile("hdfs://hadoop001:8020","root","/data/wordCount/word.txt",wordGenerateUtils.generateWordStrs(count));
 
-        wordGenerateUtils.saveToHdfsFile("hdfs://localhost:9000","Administrator","/data/wordCount/word.txt",wordGenerateUtils.generateWordStrs(count));
+//        wordGenerateUtils.saveToHdfsFile("hdfs://localhost:9000","Administrator","/data/wordCount/word.txt",wordGenerateUtils.generateWordStrs(count));
 
 //        String value = "Hive Hive Hive Flink Flink HBase Hive Hadoop Spark Spark Flink  ";
 //        String[] words = value.toString().split(" ");

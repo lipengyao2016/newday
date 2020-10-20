@@ -2,6 +2,10 @@ package com.tpw.newday.config;
 
 
 
+import com.tpw.newday.service.UserServiceImpl;
+import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
@@ -33,6 +37,8 @@ import java.util.Map;
         transactionManagerRef="transactionManagerSec",
         basePackages = {"com.tpw.newday.dao"}) //设置Repository所在位置
 public class JpaDataSourceConf {
+
+    private static final Log logger = LogFactory.getLog(JpaDataSourceConf.class);
     @Autowired
     private JpaProperties jpaProperties;
 
@@ -46,7 +52,10 @@ public class JpaDataSourceConf {
     @Primary
     @ConfigurationProperties(prefix="spring.datasource.primary")
     public DataSource axaDataSource() {
-        return DataSourceBuilder.create().build();
+        DataSource dataSource =  DataSourceBuilder.create().build();
+        logger.info(" primary dsn:" );
+
+        return  dataSource;
     }
 
 
@@ -59,7 +68,8 @@ public class JpaDataSourceConf {
     @Bean(name = "entityManagerFactorySec")
     public LocalContainerEntityManagerFactoryBean entityManagerFactorySec(EntityManagerFactoryBuilder builder
             , @Qualifier("axaDataSource") DataSource dataSource) {
-
+        HikariDataSource d2 = (HikariDataSource) dataSource;
+        logger.info(" 22 " + d2.getJdbcUrl() );
         HibernateProperties hibernateSettings = new HibernateProperties();
         Map<String, Object> properties = hibernateSettings.determineHibernateProperties(jpaProperties.getProperties(), new HibernateSettings());
         return builder.dataSource(dataSource)
@@ -72,6 +82,7 @@ public class JpaDataSourceConf {
     @Primary
     @Bean(name="transactionManagerSec")
     PlatformTransactionManager transactionManagerSec(@Qualifier("entityManagerFactorySec") EntityManagerFactory propertyEntityManagerFactory ){
+        logger.info(" 33 " );
         return new JpaTransactionManager(propertyEntityManagerFactory);
     }
 }

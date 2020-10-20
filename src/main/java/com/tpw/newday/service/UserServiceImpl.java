@@ -82,44 +82,65 @@ public class UserServiceImpl implements IUserService {
     public boolean syncMysqlDataToHdfs() {
         logger.info(" begin" );
 
-        int offset =0,pageSize = 1000;
+        int offset =0,pageSize = 5000;
         int totalCnt = 0;
         long lCur = System.currentTimeMillis();
         int loopCnt = 0;
+
+
         String lastCreateTime = "";
         String cacheKey = "Hdfs_MingXi:lastCreateTime";
 
-        RedisUtil redisUtil = new RedisUtil(MyConstants.redis_host_ip,MyConstants.redis_port,MyConstants.redis_password);
+        int lastId = 0;
+        String lastIdCacheKey = "Hdfs_MingXi:lastId";
 
-        String val = (String) redisUtil.get(cacheKey);
+        RedisUtil redisUtil = new RedisUtil(MyConstants.redis_host_ip,MyConstants.redis_port,MyConstants.redis_password);
+        String val = (String) redisUtil.getByStrKey(cacheKey);
         if (val != null)
         {
             lastCreateTime = val;
         }else{
             lastCreateTime = "2020-07-05 16:33:01";
-          //  lastCreateTime = MyDateUtil.formatDate(new Date(nMaxCreateTime),null);
         }
 
+        String lastIdCacheStr =  redisUtil.getByStrKey(lastIdCacheKey);
+        logger.info(" begin lastIdCacheStr:" + lastIdCacheStr);
+        if (lastIdCacheStr != null)
+        {
+            lastId = Integer.parseInt(lastIdCacheStr);
+        }
+
+        logger.info(" begin lastId:" + lastId);
 
         while (true)
         {
-            List<UserMingxi>  userMingxis =  userMingXiDao.selectAll(0,pageSize,lastCreateTime);
+//            List<UserMingxi>  userMingxis =  userMingXiDao.selectAll(0,pageSize,lastCreateTime);
+            List<UserMingxi>  userMingxis =  userMingXiDao.selectAllById(0,pageSize,lastId);
+
+            if (userMingxis.size() <=0 /*pageSize*/)
+            {
+                logger.info(" has no data.."  );
+                break;
+            }
+
             totalCnt += userMingxis.size();
             offset += pageSize;
 
-            //mingxiNewHbaseDao.WriteData(userMingxis);
-            // mingxiNewPhoenixDao.insert(userMingxis.get(0));
             userMingXiNoSqlDao.batchInsert(userMingxis);
 
 
             if (userMingxis.size() >0 )
             {
                 lastCreateTime = MyDateUtil.formatDate(userMingxis.get(userMingxis.size()-1).getCreate_time(),null);
+                lastId = userMingxis.get(userMingxis.size()-1).getId();
             }
 
             logger.info(" cnt:" + userMingxis.size() + " totalCnt:" + totalCnt
-                    +" lastCreateTime:"+lastCreateTime);
+                    +" lastCreateTime:"+lastCreateTime + " lastId:" + lastId);
+
             redisUtil.set(cacheKey,lastCreateTime,-1);
+            redisUtil.set(lastIdCacheKey,String.valueOf(lastId),-1);
+
             loopCnt++;
              if (loopCnt >= 2)
              {
@@ -130,11 +151,6 @@ public class UserServiceImpl implements IUserService {
             {
                 logger.info(" per 10 ci.. totalCnt:" + totalCnt + " loopCnt:" + loopCnt + " tm:" + (System.currentTimeMillis()-lCur) );
                 lCur = System.currentTimeMillis();
-            }
-
-            if (userMingxis.size() < pageSize)
-            {
-                break;
             }
 
         }

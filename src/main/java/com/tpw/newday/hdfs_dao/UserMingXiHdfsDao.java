@@ -20,7 +20,6 @@ import java.util.Random;
 @Repository
 public class UserMingXiHdfsDao implements UserMingXiNoSqlDao {
 
-    public static final String userMingxiPath = "/data/userMingxi/mingxi.txt";
     private static final Log logger = LogFactory.getLog(UserMingXiHdfsDao.class);
 
     public String generateWordStrs(List<UserMingxi> userMingxiList)
@@ -29,7 +28,7 @@ public class UserMingXiHdfsDao implements UserMingXiNoSqlDao {
         for (UserMingxi userMingxi: userMingxiList) {
                 sb.append(userMingxi.toString());
                 sb.append(" \n");
-                logger.info(userMingxi.toString());
+                //logger.info(userMingxi.toString());
         }
 
         return  sb.toString();
@@ -39,7 +38,7 @@ public class UserMingXiHdfsDao implements UserMingXiNoSqlDao {
     @Override
     public boolean batchInsert(List<UserMingxi> userMingxiList) {
         String data = "";
-        HdfsUtils.saveToHdfsFile(MyConstants.hdfs_url,MyConstants.hdfs_user,userMingxiPath ,this.generateWordStrs(userMingxiList));
+        HdfsUtils.saveToHdfsFile(MyConstants.hdfs_url,MyConstants.hdfs_user,MyConstants.userMingxiPath ,this.generateWordStrs(userMingxiList));
         return false;
     }
 }

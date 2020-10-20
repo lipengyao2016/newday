@@ -3,6 +3,7 @@ package com.tpw.newday.controller;
 import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.User;
 import com.tpw.newday.bean.UserMingxi;
+import com.tpw.newday.mpr.mingxi.MingXiMoneySumApp;
 import com.tpw.newday.service.IUserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +27,8 @@ public class UserMingXiController {
     @Resource
     EntityManagerFactoryBuilder builder;
 
+    @Resource
+    MingXiMoneySumApp mingXiMoneySumApp;
     /**
      * 通过ID查询用户
      * @param
@@ -45,5 +48,10 @@ public class UserMingXiController {
     @RequestMapping("/getUserMingXiByUid")
     public List<PhoniexUserMingxi> getUserMingXi(int uid) {
         return userService.getUserMingxiByUid(uid,0,10);
+    }
+
+    @RequestMapping("/runSumApp")
+    public boolean runSumApp(String inputPath,String outPath) throws Exception {
+        return mingXiMoneySumApp.runSumApp(inputPath,outPath);
     }
 }

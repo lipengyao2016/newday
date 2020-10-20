@@ -147,6 +147,20 @@ public class RedisUtil {
 		}
 	}
 
+    public  String getByStrKey(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String retObj = jedis.get(key);
+            return retObj;
+        } catch (Exception e) {
+            logger.error("Cache获取失败：" + e);
+            return null;
+        } finally {
+            releaseResource(jedis);
+        }
+    }
+
 	/**
 	 * 根据缓存键获取Redis缓存中的值.<br/>
 	 * 
@@ -161,6 +175,7 @@ public class RedisUtil {
 			jedis = jedisPool.getResource();
 			byte[] obj = jedis.get(SerializableUtil.serialize(key));
 			return obj == null ? null : SerializableUtil.unSerialize(obj);
+
 		} catch (Exception e) {
 			logger.error("Cache获取失败：" + e);
 			return null;

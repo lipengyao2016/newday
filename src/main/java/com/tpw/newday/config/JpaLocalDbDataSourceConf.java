@@ -2,6 +2,9 @@ package com.tpw.newday.config;
 
 
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
@@ -30,6 +33,9 @@ import java.util.Map;
         transactionManagerRef="transactionManagerLocalJpa",
         basePackages = {"com.tpw.newday.local_dao"}) //设置Repository所在位置
 public class JpaLocalDbDataSourceConf {
+
+    private static final Log logger = LogFactory.getLog(JpaLocalDbDataSourceConf.class);
+
     @Autowired
     private JpaProperties jpaProperties;
 
@@ -42,6 +48,7 @@ public class JpaLocalDbDataSourceConf {
     @Bean(name="localJpaDataSource")
     @ConfigurationProperties(prefix="spring.datasource.localdb")
     public DataSource axaDataSource() {
+        logger.info(" 44 " );
         return DataSourceBuilder.create().build();
     }
 
@@ -54,7 +61,8 @@ public class JpaLocalDbDataSourceConf {
     @Bean(name = "entityManagerFactoryLocalJpa")
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryLocalJpa(EntityManagerFactoryBuilder builder
             , @Qualifier("localJpaDataSource") DataSource dataSource) {
-
+        HikariDataSource d2 = (HikariDataSource) dataSource;
+        logger.info(" 55 " + d2.getJdbcUrl() );
         HibernateProperties hibernateSettings = new HibernateProperties();
         Map<String, Object> properties = hibernateSettings.determineHibernateProperties(jpaProperties.getProperties(), new HibernateSettings());
         return builder.dataSource(dataSource)
@@ -66,6 +74,7 @@ public class JpaLocalDbDataSourceConf {
 
     @Bean(name="transactionManagerLocalJpa")
     PlatformTransactionManager transactionManagerLocalJpa(@Qualifier("entityManagerFactoryLocalJpa") EntityManagerFactory propertyEntityManagerFactory ){
+        logger.info(" 66 " );
         return new JpaTransactionManager(propertyEntityManagerFactory);
     }
 }

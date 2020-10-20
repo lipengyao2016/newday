@@ -17,14 +17,24 @@ public class HdfsUtils {
         try {
             Configuration conf = new Configuration();
             conf.set("dfs.client.use.datanode.hostname", "true");
+            conf.setBoolean("dfs.support.append", true);
+            conf.set("dfs.client.block.write.replace-datanode-on-failure.policy" ,"NEVER" );
+            conf.set("dfs.client.block.write.replace-datanode-on-failure.enable" ,"true" );
+
             fileSystem = FileSystem.get(new URI(hdfsUrl),conf,user);
             org.apache.hadoop.fs.Path path = new org.apache.hadoop.fs.Path(filePath);
+            System.out.println(" init file system ok.");
             if (fileSystem.exists(path))
             {
-                fileSystem.delete(path,true);
+                System.out.println(" file exist ,will append");
+               // fileSystem.delete(path,true);
+                fsDataOutputStream =  fileSystem.append(path);
             }
-            System.out.println(" init file system ok.");
-            fsDataOutputStream = fileSystem.create(path,true);
+            else
+            {
+                System.out.println(" file not exist ,will create");
+                fsDataOutputStream = fileSystem.create(path,false);
+            }
             fsDataOutputStream.write(fileData.getBytes());
             System.out.println(" write ok.");
             fsDataOutputStream.flush();
