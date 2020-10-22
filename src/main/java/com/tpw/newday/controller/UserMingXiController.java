@@ -4,6 +4,7 @@ import com.tpw.newday.bean.PhoniexUserMingxi;
 import com.tpw.newday.bean.User;
 import com.tpw.newday.bean.UserMingxi;
 import com.tpw.newday.mpr.mingxi.MingXiMoneySumApp;
+import com.tpw.newday.mpr.rowcount.RowCountApp;
 import com.tpw.newday.service.IUserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +30,10 @@ public class UserMingXiController {
 
     @Resource
     MingXiMoneySumApp mingXiMoneySumApp;
+
+    @Resource
+    RowCountApp rowCountApp;
+
     /**
      * 通过ID查询用户
      * @param
@@ -53,5 +58,10 @@ public class UserMingXiController {
     @RequestMapping("/runSumApp")
     public boolean runSumApp(String inputPath,String outPath) throws Exception {
         return mingXiMoneySumApp.runSumApp(inputPath,outPath);
+    }
+
+    @RequestMapping("/rowCount")
+    public int rowCount(String inputTable,String outTable) throws Exception {
+        return rowCountApp.countHbaseTable(inputTable,outTable);
     }
 }
